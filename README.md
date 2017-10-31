@@ -1,13 +1,77 @@
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+This is my reading notes about <pro javascript design patterns>;
 
-Below you will find some information on how to perform common tasks.<br>
-You can find the most recent version of this guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
+## 几种定义类的方法
 
-## Table of Contents
+- 直接为对象prototype添加值
+```js
+var Person = function(){
+  ...
+}
+Person.prototype.speak = function(){
+  ...
+}
+Person.prototype.run = function(){
+  ...
+}
+```
 
-- [Updating to New Releases](#updating-to-new-releases)
-- [Sending Feedback](#sending-feedback)
-- [Folder Structure](#folder-structure)
+或者你也可以直接设置整个prototype对象
+
+```js
+var Person = function(){
+  ...
+}
+Person.prototype = {
+  speak: function(){
+    ...
+  },
+  run: function(){
+    ...
+  }
+}
+```
+
+- 闭包的特性创建私用（privite）变量
+```js
+var time;
+(function(){
+  var foo = 1
+  var bar = 2
+  time = function(){
+    return foo + bar
+  }
+})()
+
+time() //time可以正确的返回foo + bar 的值
+```
+- 对象易变性(mutable)
+
+```js
+var Person = function(name){
+  this.name = name
+  this.greet = function(){
+    console.log('hello' + this.name)
+  }
+}
+
+var alice = new Person('alice')
+var bill = new Person('bill')
+
+Person.prototype.test = function(){
+  console.log('hello world' + this.name)
+}
+alice.sayName = function(){
+  console.log(this.name)
+}
+
+alice.test() // hello worldalice
+alice.sayName()
+bill.sayName()  // TypeError: bill.sayName is not a function
+```
+虽然test方法是在对象实例化后才添加的，但是这两个实例依旧可以使用test方法,而sayName是挂载在alice这个实例上的，所以bill并不能调用该方法。
+
+
+## 继承
 - [Available Scripts](#available-scripts)
   - [npm start](#npm-start)
   - [npm test](#npm-test)
